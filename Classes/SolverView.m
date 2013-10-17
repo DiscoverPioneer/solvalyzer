@@ -18,6 +18,7 @@
   [super dealloc];
 }
 
+
 - (void)drawStroke:(SolutionStroke*)stroke inContext:(CGContextRef)context {
   CGContextBeginPath(context);  
   [stroke mapSolutionPoints:^(SolutionPoint *point, NSUInteger pointNum) {
@@ -29,9 +30,26 @@
   }];
   CGContextStrokePath(context);  
 }
-
+-(void)setBounds:(CGRect)bounds{
+    bounds=CGRectMake(0, 0, 1024, 2000);
+}
 - (void)drawRect:(CGRect)rect {
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(context, [[UIColor blackColor] CGColor]);
+    CGContextSetLineWidth(context, 4.0f);
+    CGContextSetLineCap(context, kCGLineCapRound);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
+    [[ProblemStore sharedProblemStore] mapCurrentSolutionStrokes:^(SolutionStroke *stroke,   NSUInteger strokeNum) {
+        [self drawStroke:stroke inContext:context];
+    }];
+}
+/*
+//Change HERE
+- (void)drawRect:(CGRect)rect {
+    //Here
   __block CGContextRef context = UIGraphicsGetCurrentContext();
+    //CGContextAddRect(context, CGRectMake(0, 0, 1024, 1620));
+    //[contentView.layer renderInContext:context];
   CGContextSaveGState(context);
   CGContextSetStrokeColorWithColor(context, [[UIColor blackColor] CGColor]);
   CGContextSetLineWidth(context, 4.0f);
@@ -41,8 +59,9 @@
     [self drawStroke:stroke inContext:context];
   }];
   CGContextRestoreGState(context);
+    UIGraphicsEndImageContext();
 }
-
+*/
 ////////////////////////////////////////
 // Touch Handling
 ////////////////////////////////////////
@@ -63,6 +82,7 @@
 
 - (void)touchesMoved:(NSSet *)touches 
            withEvent:(UIEvent *)event {
+    
   UITouch *touch = [touches anyObject];
   [[ProblemStore sharedProblemStore] strokeContinuedAtPoint:[touch locationInView:self]
                                            withAcceleration:motionManager.accelerometerData.acceleration];
